@@ -1,0 +1,27 @@
+{
+	"eslint.enable": true,
+    "eslint.autoFixOnSave": true,
+	"files.eol": "\n",
+	"eslint.alwaysShowStatus": true,
+    "editor.insertSpaces": true,
+	"editor.minimap.enabled": false,
+	"cSpell.words": [
+		"FULLTEXT",
+		"UUIDV",
+		"deepmerge",
+		"errcode",
+		"fecha",
+		"hema",
+		"ngram",
+		"openid",
+		"printf",
+		"touser"
+	],
+	"search.exclude": {
+		"**/node_modules": false
+	},
+	"workbench.colorTheme": "Default Light+",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true
+	},
+}
