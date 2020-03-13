@@ -5,6 +5,7 @@ const db = require('../database/models')
 
 describe('financial source', async function() {
   beforeEach(async function() {
+    await db.financialSourceTracker.destroy({where: {}})
     await db.sequelize.query(`
      DELETE FROM financialSources;
     `)
@@ -12,10 +13,28 @@ describe('financial source', async function() {
 
   const financialSources = [{
     name: '711',
-    desc: '建行'
+    desc: '建行',
+    financialSourceTrackers: [{
+      financialSourceId: null,
+      year: 2020,
+      month: 1,
+      monthlyCarryoverAmount: 1000,
+      income: 200,
+      expense: 300,
+      balance: 400
+    }, {
+      financialSourceId: null,
+      year: 2020,
+      month: 2,
+      monthlyCarryoverAmount: 1000,
+      income: 200,
+      expense: 300,
+      balance: 400
+    }]
   }, {
     name: '999',
-    desc: '工行'
+    desc: '工行',
+    financialSourceTrackers: []
   }]
 
   const addFinancialSources = async function() {
@@ -97,5 +116,73 @@ describe('financial source', async function() {
     const {body: queryResult} = await request(app).get('/financial-sources').expect(200)
     assert(queryResult.count, 1)
     assert(queryResult.rows[0].id, financialSources[1].id)
+  })
+
+  describe('tracker', async function() {
+    beforeEach(async function() {
+      await addFinancialSources()
+      await addTrackers()
+    })
+
+    const addTrackers = async function() {
+      for (let i = 0; i < financialSources.length; i++) {
+        for (let j = 0; j < financialSources[i].financialSourceTrackers.length; j++) {
+          const {year, month, monthlyCarryoverAmount, income, expense, balance} = financialSources[i].financialSourceTrackers[j]
+          await request(app).post(`/financial-sources/${financialSources[i].id}/trackers`).send({
+            year, month, monthlyCarryoverAmount, income, expense, balance
+          }).expect(201)
+          await request(app).post(`/financial-sources/${financialSources[i].id}/trackers`).send({
+            year, month, monthlyCarryoverAmount, income, expense, balance
+          }).expect(201)
+          const created = await db.financialSourceTracker.findOne({
+            where: {financialSourceId: financialSources[i].id, year, month},
+            raw: true,
+            attributes: ['id']
+          })
+          financialSources[i].financialSourceTrackers[j].id = created.id
+        }
+      }
+    }
+    it('can add', async function() {
+      for (let i = 0; i < financialSources.length; i++) {
+        assert.equal(await db.financialSourceTracker.count({
+          where: {financialSourceId: financialSources[i].id}
+        }), financialSources[i].financialSourceTrackers.length)
+      }
+    })
+
+    it('can update', async function() {
+      const financialSource = financialSources[0]
+      const tracker = financialSource.financialSourceTrackers[0]
+      tracker.income *= 2
+      const {year, month, monthlyCarryoverAmount, income, expense, balance} = tracker
+      await request(app).post(`/financial-sources/${financialSource.id}/trackers`).send({
+        year, month, monthlyCarryoverAmount, income, expense, balance
+      }).expect(201)
+      const trackerInDb = await db.financialSourceTracker.findByPk(tracker.id)
+      assert.notEqual(trackerInDb, null)
+      assert.equal(trackerInDb.income, tracker.income)
+    })
+
+    it('can remove', async function() {
+      const financialSource = financialSources[0]
+      const tracker = financialSource.financialSourceTrackers[0]
+      const {year, month} = tracker
+      await request(app).delete(`/financial-sources/${financialSource.id}/trackers/${tracker.id}`).expect(204)
+      const [trackerInDb, duplicatedTracker] = await Promise.all([
+        db.financialSourceTracker.findByPk(tracker.id),
+        db.financialSourceTracker.findOne({
+          where: {year, month, financialSourceId: financialSource.id}
+        })
+      ])
+      assert.equal(trackerInDb, null)
+      assert.equal(duplicatedTracker, null)
+    })
+
+    it('can query', async function() {
+      const financialSource = financialSources[0]
+      const {body: {count}} = await request(app).get(`/financial-sources/${financialSource.id}/trackers`).expect(200)
+      assert.equal(count, financialSource.financialSourceTrackers.length)
+    })
   })
 })

@@ -7,9 +7,11 @@ exports.pageAndOrder = () => joi.object().keys({
   isDesc: joi.boolean(),
   page: joi.number().default(1),
   pageSize: joi.number().default(10)
-})
+}).unknown(true)
 
 exports.queryResult = (rowSchema) => joi.object().keys({
   count: joi.number().integer().min(0),
   rows: joi.array().items(rowSchema)
 })
+
+exports.money = () => joi.number().integer()

@@ -58,4 +58,27 @@ module.exports = class {
     })
     return {count, rows: rows.map((_) => _.toJSON())}
   }
+
+  static async addOrUpdateTracker(transaction, tracker) {
+    return db.financialSourceTracker.bulkCreate([tracker], {
+      updateOnDuplicate: ['financialSourceId', 'year', 'month', 'monthlyCarryoverAmount', 'income', 'expense', 'balance', 'updatedAt'],
+      transaction
+    })
+  }
+
+  static async removeTracker(transaction, trackerId) {
+    return db.financialSourceTracker.destroy({
+      where: {id: trackerId},
+      transaction
+    })
+  }
+
+  static async queryTracker(transaction, queryCondition, pageAndOrder) {
+    return db.financialSourceTracker.findAndCountAll({
+      ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
+      ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder),
+      raw: true,
+      transaction
+    })
+  }
 }

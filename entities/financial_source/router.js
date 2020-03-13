@@ -59,4 +59,44 @@ exports.router = (app) => {
       }
       )
   )
+
+  app.post(
+      '/financial-sources/:sourceId/trackers',
+      validateSchemasAndSetTrans({
+        schema: financialSourceSchemas.financialSourceTracker()
+            .requiredKeys('year', 'month', 'monthlyCarryoverAmount', 'income', 'expense', 'balance')
+            .forbiddenKeys('id', 'financialSourceId', 'updatedAt', 'createdAt')
+      },
+      FinancialSourceController.addOrUpdateTracker,
+      {
+        schema: joi.any()
+      },
+      201
+      )
+  )
+
+  app.delete(
+      '/financial-sources/:sourceId/trackers/:trackerId',
+      validateSchemas({
+        schema: joi.any()
+      },
+      FinancialSourceController.removeTracker,
+      {
+        schema: joi.any()
+      },
+      204
+      )
+  )
+
+  app.get(
+      '/financial-sources/:sourceId/trackers',
+      validateSchemas({
+        schema: commonSchemas.pageAndOrder()
+      },
+      FinancialSourceController.queryTracker,
+      {
+        schema: commonSchemas.queryResult(financialSourceSchemas.financialSourceTracker())
+      }
+      )
+  )
 }

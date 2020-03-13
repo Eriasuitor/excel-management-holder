@@ -35,4 +35,32 @@ module.exports = class {
     const pageAndOrder = sqlTool.abstractQueryInf(req.query)
     return FinancialSourcesService.query(undefined, req.query, pageAndOrder)
   }
+
+  /**
+   * @param {express.request} req
+   */
+  static async addOrUpdateTracker(req) {
+    const {sourceId} = req.params
+    req.body.financialSourceId = sourceId
+    return FinancialSourcesService.addOrUpdateTracker(req.transaction, req.body)
+  }
+
+  /**
+   * @param {express.request} req
+   */
+  static async removeTracker(req) {
+    const {trackerId} = req.params
+    await FinancialSourcesService.removeTracker(req.transaction, trackerId)
+    return
+  }
+
+  /**
+   * @param {express.request} req
+   */
+  static async queryTracker(req) {
+    const {sourceId} = req.params
+    const pageAndOrder = sqlTool.abstractQueryInf(req.query)
+    req.query.financialSourceId = sourceId
+    return FinancialSourcesService.queryTracker(req.transaction, req.query, pageAndOrder)
+  }
 }
