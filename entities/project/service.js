@@ -31,6 +31,9 @@ module.exports = class {
         transaction
       })
       if (existedProject) {
+        if (existedProject.id == projectId) {
+          return existedProject
+        }
         superError(409, `项目“${project.name}”已经或曾经存在。`).throw()
       }
     }
@@ -87,6 +90,9 @@ module.exports = class {
       transaction
     })
     if (duplicated) {
+      if (duplicated.id == liquidityTypeId) {
+        return duplicated
+      }
       superError(409, `该项目的“${type}”收入或支出类型已经或曾经存在。`).throw()
     }
     existed.type = type

@@ -25,7 +25,7 @@ exports.router = (app) => {
   app.put(
       '/projects/:id',
       validateSchemasAndSetTrans({
-        schema: projectSchemas.projectSchema().requiredKeys('name').forbiddenKeys('id', 'createdAt', 'updatedAt')
+        schema: projectSchemas.projectSchema().forbiddenKeys('id', 'createdAt', 'updatedAt')
       },
       ProjectController.update,
       {

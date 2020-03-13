@@ -1,6 +1,6 @@
 const joi = require('joi')
 const common = require('./common')
-const LiquidityParentType = require('../enum/liquidityParentType')
+const LiquidityParentType = require('../enum/liquidity_parent_type')
 
 exports.liquidityTypeSchema = () => joi.object().keys({
   id: common.generalId(),

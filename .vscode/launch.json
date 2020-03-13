@@ -21,6 +21,8 @@
 			"args": [
 				"--colors",
 				"--recursive",
+				"--timeout",
+				"10000",
 				// "-g",
 				// "can add check desk"
 			],

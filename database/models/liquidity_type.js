@@ -1,7 +1,7 @@
 'use strict'
 // eslint-disable-next-line no-unused-vars
 const {Sequelize, Model, DataTypes} = require('sequelize')
-const LiquidityParentType = require('../../enum/liquidityParentType')
+const LiquidityParentType = require('../../enum/liquidity_parent_type')
 
 /**
  * @param {Sequelize} sequelize

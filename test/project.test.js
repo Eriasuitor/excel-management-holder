@@ -2,7 +2,7 @@ const app = require('../app')
 const request = require('supertest')
 const assert = require('power-assert')
 const db = require('../database/models')
-const LiquidityParentType = require('../enum/liquidityParentType')
+const LiquidityParentType = require('../enum/liquidity_parent_type')
 
 describe('project', async function() {
   beforeEach(async function() {
@@ -76,6 +76,9 @@ describe('project', async function() {
     await request(app).put(`/projects/${projects[1].id}`).send({
       name: projects[0].name
     }).expect(409)
+    await request(app).put(`/projects/${projects[1].id}`).send({
+      name: projects[1].name
+    }).expect(200)
   })
 
   const removeProject = async function(id) {
@@ -168,6 +171,15 @@ describe('project', async function() {
           .expect(200)
       const updated = await db.liquidityType.findByPk(projects[0].liquidityParentTypes[0].id)
       assert.equal(updated.type, projects[0].liquidityParentTypes[0].type)
+
+      await request(app)
+          .put(`/projects/${projects[0].id}/liquidity-types/${projects[0].liquidityParentTypes[0].id}`)
+          .send({type: projects[0].liquidityParentTypes[1].type})
+          .expect(409)
+      await request(app)
+          .put(`/projects/${projects[0].id}/liquidity-types/${projects[0].liquidityParentTypes[0].id}`)
+          .send({type: projects[0].liquidityParentTypes[0].type})
+          .expect(200)
     })
 
     const removeLiquidityType = function(liquidityTypeId) {
