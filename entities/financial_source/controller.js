@@ -63,4 +63,40 @@ module.exports = class {
     req.query.financialSourceId = sourceId
     return FinancialSourcesService.queryTracker(req.transaction, req.query, pageAndOrder)
   }
+
+  /**
+   * @param {express.request} req
+   */
+  static async addFinancialFlow(req) {
+    const {financialSourceId} = req.params
+    req.body.financialSourceId = financialSourceId
+    return FinancialSourcesService.addFinancialFlow(req.transaction, req.body)
+  }
+
+  /**
+   * @param {express.request} req
+   */
+  static async updateFinancialFlow(req) {
+    const {financialFlowId} = req.params
+    return FinancialSourcesService.updateFinancialFlow(req.transaction, financialFlowId, req.body)
+  }
+
+  /**
+   * @param {express.request} req
+   */
+  static async removeFinancialFlow(req) {
+    const {financialFlowId} = req.params
+    await FinancialSourcesService.removeFinancialFlow(req.transaction, financialFlowId)
+    return
+  }
+
+  /**
+   * @param {express.request} req
+   */
+  static async queryFinancialFlow(req) {
+    const {financialSourceId} = req.params
+    req.body.financialSourceId = financialSourceId
+    const pageAndOrder = sqlTool.abstractQueryInf(req.query)
+    return FinancialSourcesService.queryFinancialFlow(req.transaction, req.query, pageAndOrder)
+  }
 }

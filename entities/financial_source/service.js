@@ -81,4 +81,32 @@ module.exports = class {
       transaction
     })
   }
+
+  static async addFinancialFlow(transaction, financialFlow) {
+    return db.financialFlow.create(financialFlow, {
+      transaction
+    })
+  }
+
+  static async updateFinancialFlow(transaction, financialFlowId, financialFlow) {
+    return db.financialFlow.update(financialFlow, {
+      where: {id: financialFlowId},
+      transaction
+    })
+  }
+
+  static async removeFinancialFlow(transaction, financialFlowId) {
+    return db.financialFlow.destroy({
+      where: {id: financialFlowId},
+      transaction
+    })
+  }
+
+  static async queryFinancialFlow(transaction, queryCondition, pageAndOrder) {
+    return db.financialFlow.findAndCountAll({
+      ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
+      ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder),
+      raw: true
+    })
+  }
 }
