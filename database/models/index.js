@@ -28,6 +28,7 @@ db.project = require('./project')(sequelize, Sequelize.DataTypes)
 db.liquidityType = require('./liquidity_type')(sequelize, Sequelize.DataTypes)
 db.financialSource = require('./financial_source')(sequelize, Sequelize.DataTypes)
 db.financialSourceTracker = require('./financial_source_tracker')(sequelize, Sequelize.DataTypes)
+db.document = require('./document')(sequelize, Sequelize.DataTypes)
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {

@@ -6,6 +6,7 @@
     "editor.insertSpaces": true,
 	"editor.minimap.enabled": false,
 	"cSpell.words": [
+		"DATEONLY",
 		"FULLTEXT",
 		"UUIDV",
 		"deepmerge",

@@ -17,5 +17,5 @@ module.exports = {
       collate: 'utf8mb4_unicode_ci'
     }
   },
-  preference: {},
+  preference: {}
 }

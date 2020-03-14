@@ -7,7 +7,7 @@ const {Sequelize, Model, DataTypes} = require('sequelize')
  * @param {DataTypes} DataTypes
  */
 module.exports = (sequelize, DataTypes) => {
-  const financialSourceTracker = sequelize.define('financial_source_tracker', {
+  const financialSourceTracker = sequelize.define('financialSourceTracker', {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
       primaryKey: true,
@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     ]
   })
   financialSourceTracker.associate = function(models) {
-    financialSourceTracker.belongsTo(models.financialSource)
+    financialSourceTracker.belongsTo(models.financialSource, {onDelete: 'RESTRICT'})
   }
   return financialSourceTracker
 }

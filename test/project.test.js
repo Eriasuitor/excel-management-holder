@@ -4,60 +4,99 @@ const assert = require('power-assert')
 const db = require('../database/models')
 const LiquidityParentType = require('../enum/liquidity_parent_type')
 
-describe('project', async function() {
-  beforeEach(async function() {
-    await db.sequelize.query(`
-     DELETE FROM liquidityTypes;
-    `)
-    await db.sequelize.query(`
-     DELETE FROM projects;
-    `)
-  })
 
-  const projects = [{
-    name: '个人成长基金',
-    desc: '个人成长基金的使用情况',
-    liquidityParentTypes: [{
-      parentType: LiquidityParentType.EXPENSE,
-      type: '吃饭'
-    }, {
-      parentType: LiquidityParentType.EXPENSE,
-      type: '喝水'
-    }, {
-      parentType: LiquidityParentType.INCOME,
-      type: '打工'
-    }, {
-      parentType: LiquidityParentType.EXPENSE,
-      type: '打工'
-    }]
+const projects = [{
+  name: '个人成长基金',
+  desc: '个人成长基金的使用情况',
+  liquidityParentTypes: [{
+    parentType: LiquidityParentType.EXPENSE,
+    type: '吃饭'
   }, {
-    name: '活动经费',
-    desc: '团队经常使用的活动经费',
-    liquidityParentTypes: []
+    parentType: LiquidityParentType.INCOME,
+    type: '打工'
+  }, {
+    parentType: LiquidityParentType.EXPENSE,
+    type: '喝水'
+  }, {
+    parentType: LiquidityParentType.EXPENSE,
+    type: '打工'
   }]
+}, {
+  name: '活动经费',
+  desc: '团队经常使用的活动经费',
+  liquidityParentTypes: []
+}]
 
-  const addProjects = async function() {
-    for (let i = 0; i < projects.length; i++) {
-      const project = projects[i]
-      await request(app).post('/projects').send({
-        name: project.name,
-        desc: project.desc
-      }).expect(201)
+const addProjects = async function() {
+  for (let i = 0; i < projects.length; i++) {
+    const project = projects[i]
+    await request(app).post('/projects').send({
+      name: project.name,
+      desc: project.desc
+    }).expect(201)
+  }
+  for (let i = 0; i < projects.length; i++) {
+    const project = projects[i]
+    await request(app).post('/projects').send({
+      name: project.name,
+      desc: project.desc
+    }).expect(409)
+    const created = await db.project.findOne({
+      where: {name: projects[i].name},
+      raw: true,
+      attributes: ['id']
+    })
+    projects[i].id = created.id
+  }
+}
+
+const cleanProjects = async function() {
+  await db.document.destroy({where: {}})
+  await cleanLiquidityType()
+  return db.project.destroy({where: {}, force: true})
+}
+
+const addLiquidityTypes = async function() {
+  for (let i = 0; i < projects.length; i++) {
+    for (let j = 0; j < projects[i].liquidityParentTypes.length; j++) {
+      await request(app).post(`/projects/${projects[i].id}`)
+          .send({
+            parentType: projects[i].liquidityParentTypes[j].parentType,
+            type: projects[i].liquidityParentTypes[j].type
+          })
+          .expect(201)
     }
-    for (let i = 0; i < projects.length; i++) {
-      const project = projects[i]
-      await request(app).post('/projects').send({
-        name: project.name,
-        desc: project.desc
-      }).expect(409)
-      const created = await db.project.findOne({
-        where: {name: projects[i].name},
+  }
+  for (let i = 0; i < projects.length; i++) {
+    for (let j = 0; j < projects[i].liquidityParentTypes.length; j++) {
+      await request(app).post(`/projects/${projects[i].id}`)
+          .send({
+            parentType: projects[i].liquidityParentTypes[j].parentType,
+            type: projects[i].liquidityParentTypes[j].type
+          })
+          .expect(409)
+      const created = await db.liquidityType.findOne({
+        where: {
+          projectId: projects[i].id,
+          parentType: projects[i].liquidityParentTypes[j].parentType,
+          type: projects[i].liquidityParentTypes[j].type
+        },
         raw: true,
         attributes: ['id']
       })
-      projects[i].id = created.id
+      projects[i].liquidityParentTypes[j].id = created.id
     }
   }
+}
+
+const cleanLiquidityType = async function() {
+  return db.liquidityType.destroy({where: {}, force: true})
+}
+
+describe('project', async function() {
+  beforeEach(async function() {
+    await cleanProjects()
+  })
 
   it('can add project', async function() {
     await addProjects()
@@ -123,39 +162,6 @@ describe('project', async function() {
       await addLiquidityTypes()
     })
 
-    const addLiquidityTypes = async function() {
-      for (let i = 0; i < projects.length; i++) {
-        for (let j = 0; j < projects[i].liquidityParentTypes.length; j++) {
-          await request(app).post(`/projects/${projects[i].id}`)
-              .send({
-                parentType: projects[i].liquidityParentTypes[j].parentType,
-                type: projects[i].liquidityParentTypes[j].type
-              })
-              .expect(201)
-        }
-      }
-      for (let i = 0; i < projects.length; i++) {
-        for (let j = 0; j < projects[i].liquidityParentTypes.length; j++) {
-          await request(app).post(`/projects/${projects[i].id}`)
-              .send({
-                parentType: projects[i].liquidityParentTypes[j].parentType,
-                type: projects[i].liquidityParentTypes[j].type
-              })
-              .expect(409)
-          const created = await db.liquidityType.findOne({
-            where: {
-              projectId: projects[i].id,
-              parentType: projects[i].liquidityParentTypes[j].parentType,
-              type: projects[i].liquidityParentTypes[j].type
-            },
-            raw: true,
-            attributes: ['id']
-          })
-          projects[i].liquidityParentTypes[j].id = created.id
-        }
-      }
-    }
-
     it('can add liquidity type', async function() {
     })
 
@@ -212,3 +218,11 @@ describe('project', async function() {
     })
   })
 })
+
+module.exports = {
+  projects,
+  addProjects,
+  cleanProjects,
+  addLiquidityTypes,
+  cleanLiquidityType
+}

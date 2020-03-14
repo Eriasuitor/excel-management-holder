@@ -3,6 +3,59 @@ const request = require('supertest')
 const assert = require('power-assert')
 const db = require('../database/models')
 
+const financialSources = [{
+  name: '711',
+  desc: '建行',
+  financialSourceTrackers: [{
+    financialSourceId: null,
+    year: 2020,
+    month: 1,
+    monthlyCarryoverAmount: 1000,
+    income: 200,
+    expense: 300,
+    balance: 400
+  }, {
+    financialSourceId: null,
+    year: 2020,
+    month: 2,
+    monthlyCarryoverAmount: 1000,
+    income: 200,
+    expense: 300,
+    balance: 400
+  }]
+}, {
+  name: '999',
+  desc: '工行',
+  financialSourceTrackers: []
+}]
+
+const addFinancialSources = async function() {
+  for (let i = 0; i < financialSources.length; i++) {
+    const financialSource = financialSources[i]
+    await request(app).post('/financial-sources').send({
+      name: financialSource.name,
+      desc: financialSource.desc
+    }).expect(201)
+  }
+  for (let i = 0; i < financialSources.length; i++) {
+    const financialSource = financialSources[i]
+    await request(app).post('/financial-sources').send({
+      name: financialSource.name,
+      desc: financialSource.desc
+    }).expect(409)
+    const created = await db.financialSource.findOne({
+      where: {name: financialSources[i].name},
+      raw: true,
+      attributes: ['id']
+    })
+    financialSources[i].id = created.id
+  }
+}
+
+const cleanFinancialSource = async function() {
+  return db.financialSource.destroy({where: {}})
+}
+
 describe('financial source', async function() {
   beforeEach(async function() {
     await db.financialSourceTracker.destroy({where: {}})
@@ -10,55 +63,6 @@ describe('financial source', async function() {
      DELETE FROM financialSources;
     `)
   })
-
-  const financialSources = [{
-    name: '711',
-    desc: '建行',
-    financialSourceTrackers: [{
-      financialSourceId: null,
-      year: 2020,
-      month: 1,
-      monthlyCarryoverAmount: 1000,
-      income: 200,
-      expense: 300,
-      balance: 400
-    }, {
-      financialSourceId: null,
-      year: 2020,
-      month: 2,
-      monthlyCarryoverAmount: 1000,
-      income: 200,
-      expense: 300,
-      balance: 400
-    }]
-  }, {
-    name: '999',
-    desc: '工行',
-    financialSourceTrackers: []
-  }]
-
-  const addFinancialSources = async function() {
-    for (let i = 0; i < financialSources.length; i++) {
-      const financialSource = financialSources[i]
-      await request(app).post('/financial-sources').send({
-        name: financialSource.name,
-        desc: financialSource.desc
-      }).expect(201)
-    }
-    for (let i = 0; i < financialSources.length; i++) {
-      const financialSource = financialSources[i]
-      await request(app).post('/financial-sources').send({
-        name: financialSource.name,
-        desc: financialSource.desc
-      }).expect(409)
-      const created = await db.financialSource.findOne({
-        where: {name: financialSources[i].name},
-        raw: true,
-        attributes: ['id']
-      })
-      financialSources[i].id = created.id
-    }
-  }
 
   it('can add financialSource', async function() {
     await addFinancialSources()
@@ -186,3 +190,9 @@ describe('financial source', async function() {
     })
   })
 })
+
+module.exports = {
+  financialSources,
+  addFinancialSources,
+  cleanFinancialSource
+}

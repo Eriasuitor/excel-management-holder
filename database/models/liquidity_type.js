@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     paranoid: true
   })
   liquidityType.associate = function(models) {
-    liquidityType.belongsTo(models.project)
+    liquidityType.belongsTo(models.project, {onDelete: 'RESTRICT'})
   }
   return liquidityType
 }
