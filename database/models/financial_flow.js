@@ -6,7 +6,7 @@ const {Sequelize, Model, DataTypes} = require('sequelize')
  * @param {DataTypes} DataTypes
  */
 module.exports = (sequelize, DataTypes) => {
-  const financialFlow = sequelize.define('financial_flow', {
+  const financialFlow = sequelize.define('financialFlow', {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
       primaryKey: true,

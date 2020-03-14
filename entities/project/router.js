@@ -12,7 +12,7 @@ exports.router = (app) => {
   app.post(
       '/projects',
       validateSchemasAndSetTrans({
-        schema: projectSchemas.projectSchema().requiredKeys('name').forbiddenKeys('id', 'createdAt', 'updatedAt')
+        schema: projectSchemas.projectSchema().requiredKeys('name').forbiddenKeys('id', 'createdAt', 'updatedAt').optionalKeys('desc')
       },
       ProjectController.add,
       {
