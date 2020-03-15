@@ -11,7 +11,7 @@ module.exports = class {
     })
     if (existedProject) {
       if (existedProject.deletedAt !== null) {
-        existedProject.desc = project.desc
+        existedProject.desc = project.desc || ''
         return existedProject.restore({transaction})
       }
       superError(409, `项目“${project.name}”已经存在。`).throw()
@@ -31,10 +31,9 @@ module.exports = class {
         transaction
       })
       if (existedProject) {
-        if (existedProject.id == projectId) {
-          return existedProject
+        if (existedProject.id != projectId) {
+          superError(409, `项目“${project.name}”已经或曾经存在。`).throw()
         }
-        superError(409, `项目“${project.name}”已经或曾经存在。`).throw()
       }
     }
     return db.project.update(project, {
@@ -51,14 +50,20 @@ module.exports = class {
   }
 
   static async query(transaction, queryCondition, pageAndOrder) {
-    const {count, rows} = await db.project.findAndCountAll({
-      ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
-      ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder),
-      include: [{
-        model: db.liquidityType
-      }],
-      transaction
-    })
+    const [count, rows] = await Promise.all([
+      db.project.count({
+        ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
+        ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder)
+      }),
+      db.project.findAll({
+        ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
+        ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder),
+        include: [{
+          model: db.liquidityType
+        }],
+        transaction
+      })
+    ])
     return {count, rows: rows.map((_) => _.toJSON())}
   }
 

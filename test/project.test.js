@@ -59,7 +59,7 @@ const cleanProjects = async function() {
 const addLiquidityTypes = async function() {
   for (let i = 0; i < projects.length; i++) {
     for (let j = 0; j < projects[i].liquidityParentTypes.length; j++) {
-      await request(app).post(`/projects/${projects[i].id}`)
+      await request(app).post(`/projects/${projects[i].id}/liquidity-types`)
           .send({
             parentType: projects[i].liquidityParentTypes[j].parentType,
             type: projects[i].liquidityParentTypes[j].type
@@ -69,7 +69,7 @@ const addLiquidityTypes = async function() {
   }
   for (let i = 0; i < projects.length; i++) {
     for (let j = 0; j < projects[i].liquidityParentTypes.length; j++) {
-      await request(app).post(`/projects/${projects[i].id}`)
+      await request(app).post(`/projects/${projects[i].id}/liquidity-types`)
           .send({
             parentType: projects[i].liquidityParentTypes[j].parentType,
             type: projects[i].liquidityParentTypes[j].type
@@ -201,14 +201,14 @@ describe('project', async function() {
     it('can add again after being removed', async function() {
       await removeLiquidityType(projects[0].liquidityParentTypes[0].id)
 
-      await request(app).post(`/projects/${projects[0].id}`)
+      await request(app).post(`/projects/${projects[0].id}/liquidity-types`)
           .send({
             parentType: projects[0].liquidityParentTypes[0].parentType,
             type: projects[0].liquidityParentTypes[0].type
           })
           .expect(201)
 
-      await request(app).post(`/projects/${projects[0].id}`)
+      await request(app).post(`/projects/${projects[0].id}/liquidity-types`)
           .send({
             parentType: projects[0].liquidityParentTypes[1].parentType,
             type: projects[0].liquidityParentTypes[1].type

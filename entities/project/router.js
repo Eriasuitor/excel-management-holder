@@ -61,7 +61,7 @@ exports.router = (app) => {
   )
 
   app.post(
-      '/projects/:projectId',
+      '/projects/:projectId/liquidity-types',
       validateSchemasAndSetTrans({
         schema: projectSchemas.liquidityTypeSchema().requiredKeys('parentType', 'type').forbiddenKeys('id', 'projectId', 'createdAt', 'updatedAt')
       },
