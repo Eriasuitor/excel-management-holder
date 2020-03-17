@@ -43,7 +43,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     indexes: [
-      {fields: ['financialSourceId', 'year', 'month'], type: 'UNIQUE'}
+      {fields: ['financialSourceId', 'year', 'month'], type: 'UNIQUE'},
+      {fields: ['year', 'month']}
     ]
   })
   financialSourceTracker.associate = function(models) {

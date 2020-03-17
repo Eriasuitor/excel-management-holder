@@ -1,7 +1,6 @@
 const {superError} = require('../../utils/error')
 const db = require('../../database/models')
 const sqlTool = require('../../utils/sqlTool')
-const lodash = require('lodash')
 
 module.exports = class {
   static async add(transaction, financialSource) {
@@ -90,8 +89,9 @@ module.exports = class {
       COUNT( * ) AS count 
     FROM
       financialSourceTrackers 
+    INNER JOIN financialSources ON financialSources.id = financialSourceTrackers.financialSourceId
     WHERE
-      year = :year 
+      year = :year AND financialSources.deletedAt IS NULL
     GROUP BY
       month
     `, {
@@ -122,10 +122,20 @@ module.exports = class {
   }
 
   static async queryFinancialFlow(transaction, queryCondition, pageAndOrder) {
-    return db.financialFlow.findAndCountAll({
-      ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
-      ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder),
-      raw: true
-    })
+    const [count, rows] = await Promise.all([
+      db.financialFlow.count({
+        ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
+        transaction
+      }),
+      db.financialFlow.findAll({
+        ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
+        ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder),
+        include: [{
+          model: db.financialSource
+        }],
+        transaction
+      })
+    ])
+    return {count, rows: rows.map((_) => _.toJSON())}
   }
 }

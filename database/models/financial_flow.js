@@ -48,6 +48,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     indexes: [
+      {fields: ['generatedAt']}
     ]
   })
   financialFlow.associate = function(models) {

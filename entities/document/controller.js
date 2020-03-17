@@ -32,7 +32,6 @@ module.exports = class {
    * @param {express.request} req
    */
   static async query(req) {
-    console.log(req.query)
     const pageAndOrder = sqlTool.abstractQueryInf(req.query)
     return DocumentService.query(undefined, req.query, pageAndOrder)
   }

@@ -54,6 +54,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     indexes: [
+      {fields: ['generatedAt']}
     ]
   })
   document.associate = function(models) {

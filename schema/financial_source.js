@@ -31,8 +31,9 @@ exports.financialFlow = () => joi.object().keys({
   expenseAmount: common.money().min(0),
   balance: common.money(),
   generatedAt: joi.date(),
-  remark: joi.string().max(256),
+  remark: joi.string().max(256).allow(''),
   createdAt: joi.date(),
-  updatedAt: joi.date()
+  updatedAt: joi.date(),
+  financialSource: exports.financialSourceSchema()
 }).optionalKeys('id', 'financialSourceId', 'abstract', 'humanReadableId', 'incomeAmount', 'expenseAmount',
     'balance', 'generatedAt', 'remark', 'createdAt', 'updatedAt' )

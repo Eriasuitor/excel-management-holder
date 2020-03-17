@@ -103,8 +103,6 @@ module.exports = class {
    * @param {express.request} req
    */
   static async queryFinancialFlow(req) {
-    const {financialSourceId} = req.params
-    req.body.financialSourceId = financialSourceId
     const pageAndOrder = sqlTool.abstractQueryInf(req.query)
     return FinancialSourcesService.queryFinancialFlow(req.transaction, req.query, pageAndOrder)
   }
