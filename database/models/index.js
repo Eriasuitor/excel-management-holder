@@ -37,6 +37,9 @@ Object.keys(db).forEach((modelName) => {
   }
 })
 
+/**
+ * @returns Sequelize
+ */
 db.sequelize = sequelize
 db.Sequelize = Sequelize
 

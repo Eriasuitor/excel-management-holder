@@ -1,6 +1,7 @@
 const {superError} = require('../../utils/error')
 const db = require('../../database/models')
 const sqlTool = require('../../utils/sqlTool')
+const lodash = require('lodash')
 
 module.exports = class {
   static async add(transaction, financialSource) {
@@ -80,6 +81,24 @@ module.exports = class {
       raw: true,
       transaction
     })
+  }
+
+  static async queryTrackerAnnualCounter(transaction, year) {
+    const [rows] = await db.sequelize.query(`
+    SELECT
+      month,
+      COUNT( * ) AS count 
+    FROM
+      financialSourceTrackers 
+    WHERE
+      year = :year 
+    GROUP BY
+      month
+    `, {
+      transaction,
+      replacements: {year}
+    })
+    return rows
   }
 
   static async addFinancialFlow(transaction, financialFlow) {

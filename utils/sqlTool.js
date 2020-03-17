@@ -57,7 +57,7 @@ const selectConditionKeywordsSequelizeHandlers = Object.freeze([
   }),
   Object.freeze({
     suffix: 'To',
-    formatter: (key, value, reference) => ({[`${key.slice(0, key.length - 2)}`]: {[db.Op.lte]: value}})
+    formatter: (key, value, reference) => ({[`${key.slice(0, key.length - 2)}`]: {[db.Op.lt]: value}})
   }),
   Object.freeze({
     suffix: 'IsNull',
@@ -86,5 +86,5 @@ exports.resolveSequelizeSelectCondition = (condition, reference) => {
     }
     pureField && whereObjectList.push({[key]: condition[key]})
   })
-  return {[db.Op.and]: whereObjectList}
+  return {where: whereObjectList}
 }

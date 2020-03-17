@@ -91,7 +91,8 @@ exports.router = (app) => {
   app.get(
       '/financial-sources/:sourceId/trackers',
       validateSchemas({
-        schema: commonSchemas.pageAndOrder()
+        schema: commonSchemas.pageAndOrder(),
+        apiOptions: {queryMode: true}
       },
       FinancialSourceController.queryTracker,
       {
@@ -99,6 +100,25 @@ exports.router = (app) => {
       }
       )
   )
+
+  app.get(
+      '/financial-sources/all/trackers/annual-counter',
+      validateSchemas({
+        schema: joi.object().keys({
+          year: joi.number().integer().positive()
+        }).requiredKeys('year'),
+        apiOptions: {queryMode: true}
+      },
+      FinancialSourceController.queryTrackerAnnualCounter,
+      {
+        schema: joi.array().items(joi.object().keys({
+          month: joi.number().integer().min(1),
+          count: joi.number().integer().min(0)
+        }))
+      }
+      )
+  )
+
 
   app.post(
       '/financial-sources/:financialSourceId/flows',

@@ -58,11 +58,20 @@ module.exports = class {
    * @param {express.request} req
    */
   static async queryTracker(req) {
-    const {sourceId} = req.params
+    // const {sourceId} = req.params
     const pageAndOrder = sqlTool.abstractQueryInf(req.query)
-    req.query.financialSourceId = sourceId
+    // req.query.financialSourceId = sourceId
     return FinancialSourcesService.queryTracker(req.transaction, req.query, pageAndOrder)
   }
+
+  /**
+   * @param {express.request} req
+   */
+  static async queryTrackerAnnualCounter(req) {
+    const {year} = req.query
+    return FinancialSourcesService.queryTrackerAnnualCounter(req.transaction, year)
+  }
+
 
   /**
    * @param {express.request} req

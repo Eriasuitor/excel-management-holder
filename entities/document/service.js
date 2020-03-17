@@ -24,18 +24,26 @@ module.exports = class {
   }
 
   static async query(transaction, queryCondition, pageAndOrder) {
-    const {count, rows} = await db.document.findAndCountAll({
-      ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
-      ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder),
-      include: [{
-        model: db.project
-      }, {
-        model: db.liquidityType
-      }, {
-        model: db.financialSource
-      }],
-      transaction
-    })
+    console.log(queryCondition)
+    const [count, rows] = await Promise.all([
+      db.document.count({
+        ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
+        ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder),
+        transaction
+      }),
+      db.document.findAll({
+        ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
+        ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder),
+        include: [{
+          model: db.project
+        }, {
+          model: db.liquidityType
+        }, {
+          model: db.financialSource
+        }],
+        transaction
+      })
+    ])
     return {count, rows: rows.map((_) => _.toJSON())}
   }
 }

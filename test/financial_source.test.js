@@ -188,6 +188,13 @@ describe('financial source', async function() {
       const {body: {count}} = await request(app).get(`/financial-sources/${financialSource.id}/trackers`).expect(200)
       assert.equal(count, financialSource.financialSourceTrackers.length)
     })
+
+    it('can query annual counter', async function() {
+      const {body} = await request(app).get('/financial-sources/all/trackers/annual-counter?year=2020').expect(200)
+      assert.equal(body.length, 2)
+      assert.equal(body[0].count, 1)
+      assert.equal(body[1].count, 1)
+    })
   })
 
 
