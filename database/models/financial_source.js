@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255),
       allowNull: false,
       defaultValue: ''
+    },
+    initialStock: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false
     }
   }, {
     indexes: [

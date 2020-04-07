@@ -25,7 +25,7 @@ exports.router = (app) => {
   app.put(
       '/financial-sources/:id',
       validateSchemasAndSetTrans({
-        schema: financialSourceSchemas.financialSourceSchema().forbiddenKeys('id', 'createdAt', 'updatedAt')
+        schema: financialSourceSchemas.financialSourceSchema().forbiddenKeys('id', 'createdAt', 'updatedAt', 'initialStock')
       },
       FinancialSourceController.update,
       {

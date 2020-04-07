@@ -37,7 +37,7 @@ const addDocuments = async function() {
     const {projectId, financialSourceId, humanReadableId, abstract, liquidityTypeId, amount, generatedAt, handler, remark} = documents[i]
     const {body} = await request(app).post(`/documents`).send({
       projectId, financialSourceId, humanReadableId, abstract, liquidityTypeId, amount, generatedAt, handler, remark
-    })
+    }).expect(201)
     documents[i].id = body.id
   }
 }

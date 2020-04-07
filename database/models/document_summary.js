@@ -25,17 +25,23 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
     },
-    totalAmount: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+    income: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      defaultValue: 0
+    },
+    expense: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     indexes: [
-      {fields: ['financialSourceId', 'year', 'month'], type: 'UNIQUE'}
+      {fields: ['year', 'month', 'financialSourceId'], type: 'UNIQUE'}
     ]
   })
   documentSummary.associate = function(models) {
-    documentSummary.belongsTo(models.financialSource, {onDelete: 'RESTRICT'})
+    documentSummary.belongsTo(models.financialSource, {onDelete: 'CASCADE'})
   }
   return documentSummary
 }

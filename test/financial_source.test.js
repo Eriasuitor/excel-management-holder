@@ -5,10 +5,12 @@ const db = require('../database/models')
 
 const financialSources = [{
   name: '711',
-  desc: '建行'
+  desc: '建行',
+  initialStock: 10000
 }, {
   name: '999',
-  desc: '工行'
+  desc: '工行',
+  initialStock: 1000
 }]
 
 const addFinancialSources = async function() {
@@ -16,14 +18,16 @@ const addFinancialSources = async function() {
     const financialSource = financialSources[i]
     await request(app).post('/financial-sources').send({
       name: financialSource.name,
-      desc: financialSource.desc
+      desc: financialSource.desc,
+      initialStock: financialSource.initialStock
     }).expect(201)
   }
   for (let i = 0; i < financialSources.length; i++) {
     const financialSource = financialSources[i]
     await request(app).post('/financial-sources').send({
       name: financialSource.name,
-      desc: financialSource.desc
+      desc: financialSource.desc,
+      initialStock: financialSource.initialStock
     }).expect(409)
     const created = await db.financialSource.findOne({
       where: {name: financialSources[i].name},
@@ -47,6 +51,14 @@ describe('financial source', async function() {
 
   it('can add financialSource', async function() {
     await addFinancialSources()
+  })
+
+  it('can not update initial stock after created', async function() {
+    await addFinancialSources()
+    const financialSource = financialSources[0]
+    await request(app).put(`/financial-sources/${financialSource.id}`).send({
+      initialStock: 1
+    }).expect(400)
   })
 
   it('can update financialSource', async function() {

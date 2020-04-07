@@ -1,6 +1,7 @@
 const {superError} = require('../../utils/error')
 const db = require('../../database/models')
 const sqlTool = require('../../utils/sqlTool')
+const DocumentService = require('../document/service')
 
 module.exports = class {
   static async add(transaction, financialSource) {
@@ -57,5 +58,23 @@ module.exports = class {
       transaction
     })
     return {count, rows: rows.map((_) => _.toJSON())}
+  }
+
+  static async queryRespectiveMonthlyStatistics(transaction, year, month) {
+    const before = DocumentService.getGrossProfit(transaction, `year < ${year} OR (year = ${year} AND month < ${month})`)
+    const thisMonth = DocumentService.getGrossProfit(transaction, `year = ${year} AND month = ${month}`)
+    const financialSources = await db.financialSource.findAll({
+      transaction, raw: true, attributes: ['id', 'initialStock']
+    })
+    return financialSources.map((fs) => {
+      const {totalExpense = 0, totalIncome = 0} = before.find((_) => _.financialSourceId === fs.id) || {}
+      const {totalExpense: expense = 0, totalIncome: income = 0} = thisMonth.find((_) => _.financialSourceId === fs.id) || {}
+      return {
+        monthlyCarryoverAmount: fs.initialStock - totalExpense + totalIncome,
+        expense,
+        income,
+        balance: fs.initialStock - totalExpense - expense + totalIncome + income
+      }
+    })
   }
 }
