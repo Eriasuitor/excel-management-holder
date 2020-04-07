@@ -7,7 +7,7 @@ const {Sequelize, Model, DataTypes} = require('sequelize')
  * @param {DataTypes} DataTypes
  */
 module.exports = (sequelize, DataTypes) => {
-  const financialSourceTracker = sequelize.define('financialSourceTracker', {
+  const documentSummary = sequelize.define('documentSummary', {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
       primaryKey: true,
@@ -25,30 +25,17 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
     },
-    monthlyCarryoverAmount: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    income: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    expense: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    balance: {
+    totalAmount: {
       type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {
     indexes: [
-      {fields: ['financialSourceId', 'year', 'month'], type: 'UNIQUE'},
-      {fields: ['year', 'month']}
+      {fields: ['financialSourceId', 'year', 'month'], type: 'UNIQUE'}
     ]
   })
-  financialSourceTracker.associate = function(models) {
-    financialSourceTracker.belongsTo(models.financialSource, {onDelete: 'RESTRICT'})
+  documentSummary.associate = function(models) {
+    documentSummary.belongsTo(models.financialSource, {onDelete: 'RESTRICT'})
   }
-  return financialSourceTracker
+  return documentSummary
 }
