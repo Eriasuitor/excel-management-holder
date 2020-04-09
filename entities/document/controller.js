@@ -35,4 +35,12 @@ module.exports = class {
     const pageAndOrder = sqlTool.abstractQueryInf(req.query)
     return DocumentService.query(undefined, req.query, pageAndOrder)
   }
+
+  /**
+   * @param {express.request} req
+   */
+  static async queryRespectiveMonthlyStatistics(req) {
+    const {year, month} = req.query
+    return DocumentService.queryRespectiveMonthlyStatistics(undefined, year, month)
+  }
 }

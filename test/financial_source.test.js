@@ -113,6 +113,7 @@ describe('financial source', async function() {
     const {body: queryResult} = await request(app).get('/financial-sources').expect(200)
     assert(queryResult.count, 1)
     assert(queryResult.rows[0].id, financialSources[1].id)
+    assert(queryResult.rows[0].initialStock, financialSources[1].initialStock)
   })
 })
 

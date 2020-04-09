@@ -1,6 +1,5 @@
 const db = require('../../database/models')
 const sqlTool = require('../../utils/sqlTool')
-const LiquidityParentType = require('../../enum/liquidity_parent_type')
 
 module.exports = class {
   static async add(transaction, document) {
@@ -155,10 +154,33 @@ module.exports = class {
         SUM(expense) AS totalExpense
       FROM documentSummaries
       WHERE ${sqlWhere}
-      ORDER BY financialSourceId
+      GROUP BY financialSourceId
     `, {
       transaction
     })
+    result.forEach((_) => {
+      _.totalIncome = Number(_.totalIncome)
+      _.totalExpense = Number(_.totalExpense)
+    })
     return result
+  }
+
+  static async queryRespectiveMonthlyStatistics(transaction, year, month) {
+    const before = await this.getGrossProfit(transaction, `year < ${year} OR (year = ${year} AND month < ${month})`)
+    const thisMonth = await this.getGrossProfit(transaction, `year = ${year} AND month = ${month}`)
+    const financialSources = await db.financialSource.findAll({
+      transaction, raw: true
+    })
+    return financialSources.map((fs) => {
+      const {totalExpense = 0, totalIncome = 0} = before.find((_) => _.financialSourceId === fs.id) || {}
+      const {totalExpense: expense = 0, totalIncome: income = 0} = thisMonth.find((_) => _.financialSourceId === fs.id) || {}
+      fs.monthlyStatistics = {
+        monthlyCarryoverAmount: fs.initialStock - totalExpense + totalIncome,
+        expense,
+        income,
+        balance: fs.initialStock - totalExpense - expense + totalIncome + income
+      }
+      return fs
+    })
   }
 }
