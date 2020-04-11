@@ -31,10 +31,9 @@ module.exports = class {
         transaction
       })
       if (existedProject) {
-        if (existedProject.id == financialSourceId) {
-          return existedProject
+        if (existedProject.id != financialSourceId) {
+          superError(409, `资金渠道“${financialSource.name}”已经或曾经存在。`).throw()
         }
-        superError(409, `资金渠道“${financialSource.name}”已经或曾经存在。`).throw()
       }
     }
     return db.financialSource.update(financialSource, {
@@ -51,11 +50,12 @@ module.exports = class {
   }
 
   static async query(transaction, queryCondition, pageAndOrder) {
-    const {count, rows} = await db.financialSource.findAndCountAll({
+    let {count, rows} = await db.financialSource.findAndCountAll({
       ...sqlTool.resolveSequelizeSelectCondition(queryCondition),
       ...sqlTool.resolveSequelizePageAndOrder(pageAndOrder),
       transaction
     })
-    return {count, rows: rows.map((_) => _.toJSON())}
+    rows = rows.map((_) => _.toJSON())
+    return {count, rows}
   }
 }

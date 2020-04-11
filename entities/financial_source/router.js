@@ -12,7 +12,7 @@ exports.router = (app) => {
   app.post(
       '/financial-sources',
       validateSchemasAndSetTrans({
-        schema: financialSourceSchemas.financialSourceSchema().requiredKeys('name').forbiddenKeys('id', 'createdAt', 'updatedAt')
+        schema: financialSourceSchemas.financialSourceSchema().requiredKeys('name', 'initialStock').forbiddenKeys('id', 'createdAt', 'updatedAt')
       },
       FinancialSourceController.add,
       {
