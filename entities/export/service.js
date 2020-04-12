@@ -366,4 +366,78 @@ module.exports = class {
 
     return wb
   }
+
+
+  static async monthlyProject(transaction, {year, month, projectId}, {wb = new xl.Workbook()} = {}) {
+    const [{rows}, project] = await Promise.all([
+      DocumentService.query(transaction, {
+        generatedAtFrom: `${year}/${month}/1`,
+        generatedAtTo: `${year}/${month + 1}/1`,
+        projectId
+      }, {pageSize: Number.MAX_SAFE_INTEGER}),
+      db.project.findByPk(projectId, {
+        transaction,
+        raw: true,
+        attributes: ['name']
+      })
+    ])
+
+    const contextStyle = wb.createStyle({
+      alignment: {wrapText: true, horizontal: 'center', vertical: 'center'},
+      font: {size: 12}
+    })
+    const ws = wb.addWorksheet(`${year}年${month}月“${project.name}”项目凭证详情`)
+    ws.cell(1, 1, 1, 11, true).string(`${year}年${month}月“${project.name}”项目凭证详情`).style(contextStyle).style({font: {size: 24}});
+    ['摘要', '类型', '金额', '凭证号', '小计', '合计'].forEach((item, index) => {
+      ws.cell(2, index + 2).string(item).style(contextStyle)
+    })
+
+    ws.column(2).setWidth(25)
+    ws.column(5).setWidth(40)
+
+    const parentTypeGroup = lodash.groupBy(rows, 'liquidityType.parentType')
+    console.log([3, 1, 3 + (parentTypeGroup[LiquidityParentType.INCOME] || {length: 0}).length, 1, true])
+    ws.cell(3, 1, 3 + (parentTypeGroup[LiquidityParentType.INCOME] || {length: 0}).length, 1, true).string('收入').style(contextStyle)
+    console.log([3 + (parentTypeGroup[LiquidityParentType.INCOME] || {length: 0}).length, 1,
+      2 + (parentTypeGroup[LiquidityParentType.INCOME] || {length: 0}).length + (parentTypeGroup[LiquidityParentType.EXPENSE] || {length: 0}).length, 1,
+      true])
+    ws.cell(
+        3 + (parentTypeGroup[LiquidityParentType.INCOME] || {length: 0}).length, 1,
+        2 + (parentTypeGroup[LiquidityParentType.INCOME] || {length: 0}).length + (parentTypeGroup[LiquidityParentType.EXPENSE] || {length: 0}).length, 1,
+        true
+    ).string('支出').style(contextStyle)
+    let counter = 3;
+    [LiquidityParentType.INCOME, LiquidityParentType.EXPENSE].forEach((parentType, index) => {
+      const typeGroup = lodash.groupBy(parentTypeGroup[parentType], 'liquidityType.type')
+      const parentTypeCounter = counter
+      let parentTypeTotal = 0
+      Object.values(typeGroup).forEach((documents) => {
+        let typeTotal = 0
+        const typeCounter = counter
+        documents.forEach((document) => {
+          ws.cell(counter, 2).string(document.abstract).style(contextStyle)
+          ws.cell(counter, 3).string(document.liquidityType.type).style(contextStyle)
+          ws.cell(counter, 4).number(document.amount / 2)
+          ws.cell(counter, 5).string(document.humanReadableId).style(contextStyle)
+          typeTotal += document.amount
+          counter++
+        })
+        ws.cell(typeCounter, 6).number(typeTotal / 2)
+        parentTypeTotal += typeTotal
+      })
+      ws.cell(parentTypeCounter, 7).number(parentTypeTotal / 2)
+    })
+
+    ws.cell(2, 1, counter - 1, 7).style({
+      border: {
+        left: {style: 'thin', color: 'black'},
+        right: {style: 'thin', color: 'black'},
+        top: {style: 'thin', color: 'black'},
+        bottom: {style: 'thin', color: 'black'},
+        diagonal: {style: 'thin', color: 'black'}
+      }
+    })
+
+    return wb
+  }
 }

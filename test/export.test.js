@@ -34,6 +34,11 @@ describe('export', async function() {
         type: 'monthlyDocument',
         year: 2020,
         month: 3
+      }, {
+        type: 'monthlyProject',
+        year: 2020,
+        month: 3,
+        projectId: documents[0].projectId
       }]
     }
     const res = request(app).post('/exports').send(reqBody).expect(200)
