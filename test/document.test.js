@@ -28,7 +28,7 @@ const documents = [{
   abstract: '个人使用',
   liquidityTypeId: null,
   liquidityType: projects[0].liquidityParentTypes[1],
-  amount: 100,
+  amount: 200,
   generatedAt: '2020/04/04',
   handler: 'Mr. Jone',
   remark: '有事'

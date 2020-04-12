@@ -21,7 +21,7 @@ const selectConditionKeywordsHandlers = Object.freeze([
   Object.freeze({suffix: 'In', formatter: (key, values) => `${key.slice(0, key.length - 2)} IN (${values.map((value) => `"${value}"`).join(', ')})`}),
   Object.freeze({suffix: 'Match', formatter: (key, value) => `MATCH (${key.slice(0, key.length - 5)}) AGAINST ('${value}' IN BOOLEAN MODE)`}),
   Object.freeze({suffix: 'From', formatter: (key, value) => `${key.slice(0, key.length - 4)} >= "${value}"`}),
-  Object.freeze({suffix: 'To', formatter: (key, value) => `${key.slice(0, key.length - 2)} <= "${value}"`}),
+  Object.freeze({suffix: 'To', formatter: (key, value) => `${key.slice(0, key.length - 2)} < "${value}"`}),
   Object.freeze({suffix: 'IsNull', formatter: (key, value) => `${key.slice(0, key.length - 6)} IS ${value ? '' : 'NOT'} NULL`}),
   Object.freeze({suffix: 'Not', formatter: (key, value) => `${key.slice(0, key.length - 3)} != ${value}`}),
   Object.freeze({suffix: 'Like', formatter: (key, value) => `${key.slice(0, key.length - 4)} LIKE ${value}%`})

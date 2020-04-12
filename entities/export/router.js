@@ -17,7 +17,7 @@ exports.router = (app) => {
           worksheets: joi.array().items(
               joi.object().keys({
                 name: joi.string(),
-                type: joi.string().valid('annualFinance', 'annualProject'),
+                type: joi.string().valid('annualFinance', 'annualProject', 'annualSpecifiedProject', 'annualSpecifiedProjectDetail', 'monthlyDocument'),
                 year: joi.number().integer().positive(),
                 month: commonSchemas.month(),
                 projectId: commonSchemas.generalId()

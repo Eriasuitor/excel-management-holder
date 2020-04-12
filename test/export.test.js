@@ -2,7 +2,7 @@ const app = require('../app')
 const request = require('supertest')
 const assert = require('power-assert')
 const fs = require('fs')
-const {addDocuments, cleanDocuments} = require('./document.test')
+const {addDocuments, cleanDocuments, documents} = require('./document.test')
 
 describe('export', async function() {
   beforeEach(async function() {
@@ -22,6 +22,18 @@ describe('export', async function() {
       }, {
         type: 'annualProject',
         year: 2020
+      }, {
+        type: 'annualSpecifiedProject',
+        year: 2020,
+        projectId: documents[0].projectId
+      }, {
+        type: 'annualSpecifiedProjectDetail',
+        year: 2020,
+        projectId: documents[0].projectId
+      }, {
+        type: 'monthlyDocument',
+        year: 2020,
+        month: 3
       }]
     }
     const res = request(app).post('/exports').send(reqBody).expect(200)
