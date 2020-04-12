@@ -30,6 +30,32 @@ function validateSchema(value, schema, options = {abortEarly: false}, errorStatu
 
 /**
  * @param {{schema: joi.AnySchema, options: joi.ValidationOptions, apiOptions: {queryMode: boolean}}} a
+ * @return {*}
+ */
+exports.validRequest = (
+    {schema: reqSchema, options: reqSchemaOptions, apiOptions = {}},
+) => {
+/**
+ * @param {express.request} req
+ * @param {express.response} res
+ * @param {*} next
+ */
+  return async (req, res, next) => {
+    try {
+      if (apiOptions.queryMode) {
+        req.query = validateSchema(req.query, reqSchema, reqSchemaOptions)
+      } else {
+        req.body = validateSchema(req.body, reqSchema, reqSchemaOptions)
+      }
+      next()
+    } catch (error) {
+      next(error)
+    }
+  }
+}
+
+/**
+ * @param {{schema: joi.AnySchema, options: joi.ValidationOptions, apiOptions: {queryMode: boolean}}} a
  * @param {function} operation
  * @param {{schema: joi.AnySchema, options: joi.ValidationOptions, apiOptions: {queryMode: boolean}}} b
  * @param {{number}} status

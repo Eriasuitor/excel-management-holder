@@ -23,8 +23,8 @@
 				"--recursive",
 				"--timeout",
 				"10000",
-				// "-g",
-				// "can add check desk"
+				"-g",
+				"export"
 			],
 			"env": {
 				"NODE_ENV": "test"

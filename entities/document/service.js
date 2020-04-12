@@ -51,19 +51,21 @@ module.exports = class {
     liquidityType = liquidityType === undefined? existed.liquidityType: liquidityType
     financialSourceId = financialSourceId || existed.financialSourceId
 
+    // remove consume history before restore it
+    await this.saveOrUpdateDocumentSummary(
+        transaction,
+        existed.financialSourceId,
+        existed.generatedAt.getFullYear(),
+        existed.generatedAt.getMonth(),
+        existed.liquidityType.parentType,
+        -existed.amount
+    )
     const [updated] = await Promise.all([
       db.document.update(document, {
         where: {id: documentId},
         transaction
       }),
-      this.saveOrUpdateDocumentSummary(
-          transaction,
-          existed.financialSourceId,
-          existed.generatedAt.getFullYear(),
-          existed.generatedAt.getMonth(),
-          existed.liquidityType.parentType,
-          -existed.amount
-      ),
+
       this.saveOrUpdateDocumentSummary(
           transaction,
           financialSourceId,

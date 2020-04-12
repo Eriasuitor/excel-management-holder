@@ -29,12 +29,15 @@ const documents = [{
   liquidityTypeId: null,
   liquidityType: projects[0].liquidityParentTypes[1],
   amount: 100,
-  generatedAt: '2020/03/04',
+  generatedAt: '2020/04/04',
   handler: 'Mr. Jone',
   remark: '有事'
 }]
 
 const addDocuments = async function() {
+  await addProjects()
+  await addLiquidityTypes()
+  await addFinancialSources()
   for (let i = 0; i < documents.length; i++) {
     documents[i].projectId = projects[0].id
     documents[i].financialSourceId = financialSources[i].id
@@ -48,18 +51,15 @@ const addDocuments = async function() {
 }
 
 const cleanDocuments = async function() {
-  return db.documentSummary.destroy({where: {}})
-  return db.document.destroy({where: {}})
+  await cleanProjects()
+  await cleanFinancialSource()
+  await db.documentSummary.destroy({where: {}})
+  await db.document.destroy({where: {}})
 }
 
 describe('document', async function() {
   beforeEach(async function() {
-    await cleanProjects()
-    await cleanFinancialSource()
     await cleanDocuments()
-    await addProjects()
-    await addLiquidityTypes()
-    await addFinancialSources()
     await addDocuments()
   })
 

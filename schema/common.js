@@ -16,4 +16,4 @@ exports.queryResult = (rowSchema) => joi.object().keys({
 
 exports.money = () => joi.number().integer()
 
-exports.month = () => joi.number().valid(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+exports.month = () => joi.number().valid(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
