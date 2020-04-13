@@ -367,7 +367,6 @@ module.exports = class {
     return wb
   }
 
-
   static async monthlyProject(transaction, {year, month, projectId}, {wb = new xl.Workbook()} = {}) {
     const [{rows}, project] = await Promise.all([
       DocumentService.query(transaction, {

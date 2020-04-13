@@ -29,7 +29,7 @@ exports.router = (app) => {
                 month: commonSchemas.month(),
                 projectId: commonSchemas.generalId()
               })
-          )
+          ).min(1)
         })
       }),
       ExportController.handler
