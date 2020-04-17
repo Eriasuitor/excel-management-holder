@@ -1,4 +1,7 @@
 module.exports = {
+  app: {
+    port: 3000
+  },
   database: {
     username: 'root',
     password: 'HemaStudioIsSoGood!1',
@@ -11,4 +14,3 @@ module.exports = {
     }
   }
 }
-
