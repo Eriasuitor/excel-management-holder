@@ -7,7 +7,7 @@
     "start:test": "cross-env NODE_ENV=local node src/bin/start",
     "start:prod": "cross-env NODE_ENV=local pm2 start src/bin/start --name EXCEL-MANAGEMENT-HOLDER-PROD",
     "start:audit": "cross-env NODE_ENV=local pm2 start src/bin/start --name EXCEL-MANAGEMENT-HOLDER-AUDIT",
-    "start:dev": "cross-env NODE_ENV=local pm2 start src/bin/start --name EXCEL-MANAGEMENT-HOLDER-DEV",
+    "start:dev": "cross-env NODE_ENV=development pm2 start src/bin/start.js --name EXCEL-MANAGEMENT-HOLDER-DEV",
     "create": "cross-env NODE_ENV=local sequelize db:create --charset utf8mb4 --collate utf8mb4_unicode_ci",
     "sync": "cross-env NODE_ENV=local node src/bin/sync",
     "init:test": "cross-env NODE_ENV=test node src/bin/init",
