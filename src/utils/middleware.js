@@ -199,21 +199,23 @@ exports.validateTokenAndSchemasAndSetTrans = (reqSchemeObject, operation, resSch
  */
 exports.requestLogger = (req, res, next) => {
   try {
-    Logger.info('received request', {
-      header: {
-        'host': req.headers.host,
-        'origin': req.headers.origin,
-        'user-agent': req.headers['user-agent'],
-        'authorization:': req.headers.authorization,
-        'referer': req.headers.referer
-      },
-      method: req.method,
-      baseUrl: req.baseUrl,
-      originalUrl: req.originalUrl,
-      params: req.params,
-      query: req.query,
-      body: req.body
-    })
+    if (req.method.toUpperCase() !== 'GET') {
+      Logger.info('received request', {
+        header: {
+          'host': req.headers.host,
+          'origin': req.headers.origin,
+          'user-agent': req.headers['user-agent'],
+          'authorization:': req.headers.authorization,
+          'referer': req.headers.referer
+        },
+        method: req.method,
+        baseUrl: req.baseUrl,
+        originalUrl: req.originalUrl,
+        params: req.params,
+        query: req.query,
+        body: req.body
+      })
+    }
     next()
   } catch (error) {
     next(error)

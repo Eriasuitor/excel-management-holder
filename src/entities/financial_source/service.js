@@ -4,15 +4,15 @@ const sqlTool = require('../../utils/sqlTool')
 
 module.exports = class {
   static async add(transaction, financialSource) {
-    const existedProject = await db.financialSource.findOne({
+    const existedSource = await db.financialSource.findOne({
       where: {name: financialSource.name},
       paranoid: false,
       transaction
     })
-    if (existedProject) {
-      if (existedProject.deletedAt !== null) {
-        existedProject.desc = financialSource.desc
-        return existedProject.restore({transaction})
+    if (existedSource) {
+      if (existedSource.deletedAt !== null) {
+        existedSource.desc = financialSource.desc
+        return existedSource.restore({transaction})
       }
       superError(409, `资金渠道“${financialSource.name}”已经存在。`).throw()
     }
@@ -24,14 +24,14 @@ module.exports = class {
 
   static async update(transaction, financialSourceId, financialSource) {
     if (financialSource.name) {
-      const existedProject = await db.financialSource.findOne({
+      const existedSource = await db.financialSource.findOne({
         where: {name: financialSource.name},
         raw: true,
         attributes: ['id'],
         transaction
       })
-      if (existedProject) {
-        if (existedProject.id != financialSourceId) {
+      if (existedSource) {
+        if (existedSource.id != financialSourceId) {
           superError(409, `资金渠道“${financialSource.name}”已经或曾经存在。`).throw()
         }
       }

@@ -1,0 +1,18 @@
+version: '3'
+services: 
+  mysql:
+    image: "mysql:5.7"
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - /Users/englishlory/Desktop/mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "QLZ&fihvdFIw"
+  holder:
+    build: .
+    ports:
+      - "10086:10086"
+    volumes:
+      - /Users/englishlory/Desktop/logs:/app/src/logs
+    depends_on:
+      - "mysql"
+    command: /bin/sh -c "echo \"Start to wait for mysql to be fully started\" && sleep 20 && echo \"Start to initialize mysql\" && export NODE_ENV=audit && node_modules/.bin/sequelize db:create --charset utf8mb4 --collate utf8mb4_unicode_ci && node src/bin/sync && pm2-runtime start ecosystem.config.js --env audit"

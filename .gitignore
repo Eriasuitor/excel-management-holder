@@ -1,5 +1,5 @@
 # Logs
-logs/
+src/logs/
 *.log
 
 # Runtime data

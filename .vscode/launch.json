@@ -23,8 +23,8 @@
 				"--recursive",
 				"--timeout",
 				"10000",
-				"-g",
-				"export"
+				// "-g",
+				// "export"
 			],
 			"env": {
 				"NODE_ENV": "test"

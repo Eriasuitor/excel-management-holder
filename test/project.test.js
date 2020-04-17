@@ -1,8 +1,8 @@
-const app = require('../app')
+const app = require('../src/app')
 const request = require('supertest')
 const assert = require('power-assert')
-const db = require('../database/models')
-const LiquidityParentType = require('../enum/liquidity_parent_type')
+const db = require('../src/database/models')
+const LiquidityParentType = require('../src/enum/liquidity_parent_type')
 
 
 const projects = [{

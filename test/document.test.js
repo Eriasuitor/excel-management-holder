@@ -1,11 +1,11 @@
-const app = require('../app')
+const app = require('../src/app')
 const request = require('supertest')
 const assert = require('power-assert')
-const db = require('../database/models')
+const db = require('../src/database/models')
 const {projects, addProjects, cleanProjects, addLiquidityTypes} = require('./project.test')
 const {financialSources, addFinancialSources, cleanFinancialSource} = require('./financial_source.test')
 const moment = require('moment')
-const LiquidityParentType = require('../enum/liquidity_parent_type')
+const LiquidityParentType = require('../src/enum/liquidity_parent_type')
 const lodash = require('lodash')
 
 const documents = [{
@@ -104,16 +104,17 @@ describe('document', async function() {
       // await cleanDocuments()
     })
 
-    const validFinancialMonthlyStatistics = function(financialMonthlyStatistics) {
+    const validFinancialMonthlyStatistics = function(financialMonthlyStatistics, year, month) {
       assert.equal(financialMonthlyStatistics.length, financialSources.length)
+      const currentMonthDocuments = documents.filter((d) => moment(d.generatedAt).get('month') === month && moment(d.generatedAt).get('year') === year)
       for (const fs of financialSources) {
         const fms = financialMonthlyStatistics.find((_) => _.id === fs.id)
         assert.notEqual(fms, undefined)
         assert.notEqual(fms.monthlyStatistics, undefined)
-        const incomeDocuments = documents.filter(
+        const incomeDocuments = currentMonthDocuments.filter(
             (document) => document.financialSourceId === fs.id && document.liquidityType.parentType === LiquidityParentType.INCOME
         )
-        const expenseDocuments = documents.filter(
+        const expenseDocuments = currentMonthDocuments.filter(
             (document) => document.financialSourceId === fs.id && document.liquidityType.parentType === LiquidityParentType.EXPENSE
         )
         assert.equal(fms.monthlyStatistics.income, lodash.sumBy(incomeDocuments, 'amount'))
@@ -125,10 +126,11 @@ describe('document', async function() {
 
     it('can be got', async function() {
       assert.notEqual(documents.length, 0)
+      const originalDocuments = JSON.stringify(documents)
       const {generatedAt} = documents[0]
       const queryDate = moment(generatedAt)
       const {body} = await request(app).get(`/financial-monthly-summary?month=${queryDate.get('month')}&year=${queryDate.get('year')}`).expect(200)
-      validFinancialMonthlyStatistics(body)
+      validFinancialMonthlyStatistics(body, moment(queryDate).get('year'), moment(queryDate).get('month'))
 
       documents[0].liquidityType = documents[1].liquidityType
       documents[0].liquidityTypeId = documents[1].liquidityTypeId
@@ -144,12 +146,15 @@ describe('document', async function() {
       await request(app).delete(`/documents/${documents[1].id}`).expect(204)
       delete documents[1]
       const {body: body2} = await request(app).get(`/financial-monthly-summary?month=${queryDate.get('month')}&year=${queryDate.get('year')}`).expect(200)
-      validFinancialMonthlyStatistics(body2)
+      validFinancialMonthlyStatistics(body2, moment(queryDate).get('year'), moment(queryDate).get('month'))
+
 
       await request(app).delete(`/documents/${documents[0].id}`).expect(204)
       delete documents[0]
       const {body: body3} = await request(app).get(`/financial-monthly-summary?month=${queryDate.get('month')}&year=${queryDate.get('year')}`).expect(200)
-      validFinancialMonthlyStatistics(body3)
+      validFinancialMonthlyStatistics(body3, moment(queryDate).get('year'), moment(queryDate).get('month'))
+
+      Object.assign(documents, JSON.parse(originalDocuments))
     })
   })
 })

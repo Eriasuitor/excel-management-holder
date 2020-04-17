@@ -1,4 +1,4 @@
-const app = require('../app')
+const app = require('../src/app')
 const request = require('supertest')
 const assert = require('power-assert')
 const fs = require('fs')

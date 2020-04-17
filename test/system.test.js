@@ -1,7 +1,7 @@
-const app = require('../app')
+const app = require('../src/app')
 const request = require('supertest')
 const assert = require('power-assert')
-const NodeEnv = require('../enum/nodeEnv')
+const NodeEnv = require('../src/enum/nodeEnv')
 
 describe('system', async function() {
   it('can ge info', async function() {

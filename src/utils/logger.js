@@ -1,6 +1,7 @@
 const winston = require('winston')
 const DailyRotateFile = require('winston-daily-rotate-file')
 const fecha = require('fecha')
+const path = require('path')
 const {combine, timestamp, printf} = winston.format
 
 const logger = winston.createLogger({
@@ -16,7 +17,7 @@ const logger = winston.createLogger({
   ),
   transports: [
     new DailyRotateFile({
-      dirname: 'logs',
+      dirname: path.join(__dirname, '../logs'),
       filename: '%DATE%.log'
     })
   ]

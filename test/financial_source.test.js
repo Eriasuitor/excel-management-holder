@@ -1,7 +1,7 @@
-const app = require('../app')
+const app = require('../src/app')
 const request = require('supertest')
 const assert = require('power-assert')
-const db = require('../database/models')
+const db = require('../src/database/models')
 
 const financialSources = [{
   name: '711',
@@ -96,14 +96,17 @@ describe('financial source', async function() {
   it('can add again after delete', async function() {
     await addFinancialSources()
     await removeFinancialSource(financialSources[0].id)
-    await request(app).post('/financial-sources').send({
+    const a = await request(app).post('/financial-sources').send({
       name: financialSources[0].name,
-      desc: financialSources[0].desc
-    }).expect(201)
+      desc: financialSources[0].desc,
+      initialStock: 0
+    })
+    console.log(a)
 
     await request(app).post('/financial-sources').send({
       name: financialSources[1].name,
-      desc: financialSources[1].desc
+      desc: financialSources[1].desc,
+      initialStock: 0
     }).expect(409)
   })
 
