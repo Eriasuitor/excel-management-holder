@@ -1,7 +1,7 @@
 module.exports = {
   database: {
     username: 'root',
-    password: null,
+    password: 'HemaStudioIsSoGood!1',
     database: 'excel-management-holder-dev',
     host: '127.0.0.1',
     dialect: 'mysql',
