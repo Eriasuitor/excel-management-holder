@@ -54,7 +54,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     indexes: [
-      {fields: ['generatedAt']}
+      {fields: ['generatedAt']},
+      {fields: ['projectId']},
+      {fields: ['financialSourceId']}
     ]
   })
   document.associate = function(models) {
