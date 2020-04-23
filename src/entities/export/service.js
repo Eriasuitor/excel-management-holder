@@ -342,24 +342,24 @@ module.exports = class {
     })
     const ws = wb.addWorksheet(`${year}年${month + 1}月凭证列表`)
     ws.cell(1, 1, 1, 11, true).string(`${year}年${month + 1}月凭证列表`).style(contextStyle).style({font: {size: 24}});
-    ['序号', '项目', '资金渠道', '凭证号', '摘要', '收支', '收支类型', '金额', '发生时间', '经办人', '备注'].forEach((item, index) => {
+    ['序号', '凭证号', '摘要', '项目', '收支', '收支类型', '金额', '资金渠道', '发生时间', '经办人', '备注'].forEach((item, index) => {
       ws.cell(2, index + 1).string(item).style(contextStyle)
     })
 
     ws.column(2).setWidth(25)
     ws.column(4).setWidth(25)
-    ws.column(5).setWidth(40)
+    ws.column(3).setWidth(40)
     ws.column(11).setWidth(40)
 
     rows.forEach((document, index) => {
       ws.cell(3 + index, 1).number(index + 1)
-      ws.cell(3 + index, 2).string(document.project.name).style(contextStyle)
-      ws.cell(3 + index, 3).string(document.financialSource.name).style(contextStyle)
-      ws.cell(3 + index, 4).string(document.humanReadableId).style(contextStyle)
-      ws.cell(3 + index, 5).string(document.abstract).style(contextStyle)
-      ws.cell(3 + index, 6).string(document.liquidityType.parentType === LiquidityParentType.INCOME && '收入' || '支出').style(contextStyle)
-      ws.cell(3 + index, 7).string(document.liquidityType.type).style(contextStyle)
-      ws.cell(3 + index, 8).number(document.amount / 100)
+      ws.cell(3 + index, 2).string(document.humanReadableId).style(contextStyle)
+      ws.cell(3 + index, 3).string(document.abstract).style(contextStyle)
+      ws.cell(3 + index, 4).string(document.project.name).style(contextStyle)
+      ws.cell(3 + index, 5).string(document.liquidityType.parentType === LiquidityParentType.INCOME && '收入' || '支出').style(contextStyle)
+      ws.cell(3 + index, 6).string(document.liquidityType.type).style(contextStyle)
+      ws.cell(3 + index, 7).number(document.amount / 100)
+      ws.cell(3 + index, 8).string(document.financialSource.name).style(contextStyle)
       ws.cell(3 + index, 9).string(moment(document.generatedAt).format('YYYY/MM/DD')).style(contextStyle)
       ws.cell(3 + index, 10).string(document.handler).style(contextStyle)
       ws.cell(3 + index, 11).string(document.remark).style(contextStyle)
