@@ -1,9 +1,9 @@
 module.exports = {
   database: {
     username: 'root',
-    password: 'QLZ&fihvdFIw',
-    database: 'excel-management-holder-audit',
-    host: 'mysql',
+    password: null,
+    database: 'excel-management-holder-prod',
+    host: '0.0.0.0',
     dialect: 'mysql',
     define: {
       charset: 'utf8mb4',
