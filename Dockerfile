@@ -4,8 +4,9 @@ COPY src src
 COPY package.json .
 COPY ecosystem.config.js .
 COPY .sequelizerc .
+COPY node_modules node_modules
 
-RUN npm install --production
+# RUN npm install --production
 
 EXPOSE 10086
 
