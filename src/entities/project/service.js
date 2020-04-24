@@ -62,7 +62,7 @@ module.exports = class {
         include: [{
           model: db.liquidityType
         }],
-        ...(orderBy? {}: {order: [[db.project, 'id', 'ASC'], [db.liquidityType, 'id', 'ASC']]}),
+        ...(orderBy? {}: {order: [['id', 'ASC'], [db.liquidityType, 'id', 'ASC']]}),
         transaction
       })
     ])
