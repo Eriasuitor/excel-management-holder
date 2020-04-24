@@ -34,6 +34,14 @@ module.exports = class {
     ws.cell(4, 1, 4 + 3 * financeCount, 1, true).string('收入').style(contextStyle)
     ws.cell(5 + 3 * financeCount, 1, 5 + 4 * financeCount, 1, true).string('支出').style(contextStyle)
     ws.cell(6 + 4 * financeCount, 1, 6 + 5 * financeCount, 1, true).string('余额').style(contextStyle)
+    let curMonth = moment().get('month')
+    const curYear = moment().get('year')
+    if (curYear > year) {
+      curMonth = 12
+    } else if (curYear < year) {
+      curMonth = -1
+    }
+
     financialSources.forEach((fs, index) => {
       ws.cell(4 + (index * 3), 2, 6 + index * 3, 2, true).string(fs.name).style(contextStyle)
       ws.cell(4 + (index * 3), 3).string('上月结转').style(contextStyle)
@@ -45,8 +53,10 @@ module.exports = class {
       ws.cell(6 + 4 * financeCount + index, 2, 6 + 4 * financeCount + index, 3, true).string(fs.name).style(contextStyle)
 
       range12.forEach((month) => {
+        if (month > curMonth) {
+          return
+        }
         const {monthlyStatistics: {monthlyCarryoverAmount, expense, income, balance}} = annual[month].find((_) => _.id === fs.id)
-
         ws.cell(4 + (index * 3), 4 + month).number(monthlyCarryoverAmount / 100)
         ws.cell(5 + (index * 3), 4 + month).number(income / 100)
         ws.cell(6 + (index * 3), 4 + month).number((monthlyCarryoverAmount + income) / 100)
@@ -67,6 +77,9 @@ module.exports = class {
     ws.cell(6 + 5 * financeCount, 2, 6 + 5 * financeCount, 3, true).string('合计').style(contextStyle)
 
     range12.forEach((month) => {
+      if (month > curMonth) {
+        return
+      }
       ws.cell(4 + 3 * financeCount, 4 + month).number(total.income[month] / 100)
       ws.cell(5 + 4 * financeCount, 4 + month).number(total.expense[month] / 100)
       ws.cell(6 + 5 * financeCount, 4 + month).number(total.balance[month] / 100)
