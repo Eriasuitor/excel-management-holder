@@ -250,7 +250,6 @@ module.exports = class {
       }),
       ProjectService.query(transaction, {id: projectId}, {pageSize: 1})
     ])
-    project.liquidityTypes = lodash.sortBy(project.liquidityTypes, 'id')
     const incomeLiquidityTypes = project.liquidityTypes.filter((_) => _.parentType === LiquidityParentType.INCOME)
     const expenseLiquidityTypes = project.liquidityTypes.filter((_) => _.parentType === LiquidityParentType.EXPENSE)
     const contextStyle = wb.createStyle({
